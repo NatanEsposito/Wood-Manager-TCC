@@ -1,0 +1,17 @@
+@charset "UTF-8";
+
+/* Ajuste para alinhar a altura dos botões com os campos de formulário */
+.btn-align {
+	height: calc(3.5rem + 2px);
+	/* Ajusta a altura dos botões para corresponder à altura dos campos do formulário */
+	padding: 0.375rem 0.75rem;
+	/* Alinhamento de padding com os campos input */
+	font-size: 1rem; /* Ajusta o tamanho da fonte */
+	line-height: 1.5; /* Ajusta a linha de altura */
+}
+
+.option-novo-fornecedor {
+	font-weight: bold;
+	color: #007bff; /* Cor azul */
+	background-color: #f8f9fa; /* Cor de fundo clara */
+}
