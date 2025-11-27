@@ -213,20 +213,23 @@ public class SobraMaterialDao implements ICrud<SobraMaterial>, ISobraMaterialDao
 	        params.add(filtro.getMaterial().getCodigo());
 	    }
 
-	    if (filtro.getLargura() != null && !filtro.getLargura().isEmpty()) {
-	        sql += " AND sm.largura = ? ";
-	        params.add(filtro.getLargura());
-	    }
+        // LARGURA (>=)
+        if (filtro.getLargura() != null && !filtro.getLargura().isEmpty()) {
+            sql += " AND CAST(sm.largura AS INT) >= ? ";
+            params.add(Double.parseDouble(filtro.getLargura()));
+        }
 
-	    if (filtro.getComprimento() != null && !filtro.getComprimento().isEmpty()) {
-	        sql += " AND sm.comprimento = ? ";
-	        params.add(filtro.getComprimento());
-	    }
+        // COMPRIMENTO (>=)
+        if (filtro.getComprimento() != null && !filtro.getComprimento().isEmpty()) {
+            sql += " AND CAST(sm.comprimento AS INT) >= ? ";
+            params.add(Double.parseDouble(filtro.getComprimento()));
+        }
 
-	    if (filtro.getEspessura() != null && !filtro.getEspessura().isEmpty()) {
-	        sql += " AND sm.espessura = ? ";
-	        params.add(filtro.getEspessura());
-	    }
+        // ESPESSURA (>=)
+        if (filtro.getEspessura() != null && !filtro.getEspessura().isEmpty()) {
+            sql += " AND CAST(sm.espessura AS INT) >= ? ";
+            params.add(Double.parseDouble(filtro.getEspessura()));
+        }
 
 	    PreparedStatement ps = c.prepareStatement(sql);
 
