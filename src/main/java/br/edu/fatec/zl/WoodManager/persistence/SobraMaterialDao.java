@@ -186,5 +186,82 @@ public class SobraMaterialDao implements ICrud<SobraMaterial>, ISobraMaterialDao
 
 		return sobraMateriais;
 	}
+	
+	@Override
+	public List<SobraMaterial> filtrar(SobraMaterial filtro) throws SQLException, ClassNotFoundException {
 
+	    List<SobraMaterial> lista = new ArrayList<>();
+
+	    Connection c = gDao.getConnection();
+
+	    String sql = "SELECT sm.codigo, sm.estoque, sm.largura, sm.comprimento, sm.espessura, sm.data, "
+	               + "m.codigo AS matCodigo, m.nome AS matNome "
+	               + "FROM SobraMaterial sm "
+	               + "INNER JOIN Material m ON sm.material = m.codigo "
+	               + "WHERE 1 = 1 ";
+
+	    List<Object> params = new ArrayList<>();
+
+	    // --- filtros opcionais ---
+	    if (filtro.getEstoque() != null && !filtro.getEstoque().isEmpty()) {
+	        sql += " AND sm.estoque LIKE ? ";
+	        params.add("%" + filtro.getEstoque() + "%");
+	    }
+
+	    if (filtro.getMaterial() != null && filtro.getMaterial().getCodigo() > 0) {
+	        sql += " AND sm.material = ? ";
+	        params.add(filtro.getMaterial().getCodigo());
+	    }
+
+	    if (filtro.getLargura() != null && !filtro.getLargura().isEmpty()) {
+	        sql += " AND sm.largura = ? ";
+	        params.add(filtro.getLargura());
+	    }
+
+	    if (filtro.getComprimento() != null && !filtro.getComprimento().isEmpty()) {
+	        sql += " AND sm.comprimento = ? ";
+	        params.add(filtro.getComprimento());
+	    }
+
+	    if (filtro.getEspessura() != null && !filtro.getEspessura().isEmpty()) {
+	        sql += " AND sm.espessura = ? ";
+	        params.add(filtro.getEspessura());
+	    }
+
+	    PreparedStatement ps = c.prepareStatement(sql);
+
+	    // aplica os parâmetros
+	    for (int i = 0; i < params.size(); i++) {
+	        ps.setObject(i + 1, params.get(i));
+	    }
+
+	    ResultSet rs = ps.executeQuery();
+
+	    while (rs.next()) {
+
+	        Material m = new Material();
+	        m.setCodigo(rs.getInt("matCodigo"));
+	        m.setNome(rs.getString("matNome"));
+
+	        SobraMaterial sm = new SobraMaterial();
+	        sm.setCodigo(rs.getInt("codigo"));
+	        sm.setEstoque(rs.getString("estoque"));
+	        sm.setLargura(rs.getString("largura"));
+	        sm.setComprimento(rs.getString("comprimento"));
+	        sm.setEspessura(rs.getString("espessura"));
+	        sm.setData(rs.getDate("data"));
+	        sm.setMaterial(m);
+
+	        lista.add(sm);
+	    }
+
+	    rs.close();
+	    ps.close();
+	    c.close();
+
+	    return lista;
+	}
+
+	
+	
 }
