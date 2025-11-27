@@ -136,4 +136,55 @@ public class VisualizacaoController {
     private List<Material> listarMateriais() throws SQLException, ClassNotFoundException {
         return mDao.findAll();
     }
+ // Filtro fixo para Nicho
+    @RequestMapping(value = "/visualizacao/nicho", method = RequestMethod.GET)
+    public ModelAndView filtroNicho(ModelMap model) {
+        SobraMaterial filtro = new SobraMaterial();
+        filtro.setLargura("150");
+        filtro.setComprimento("450");
+        return filtrarSobraMaterial(filtro, model);
+    }
+
+    // Filtro fixo para Prateleira
+    @RequestMapping(value = "/visualizacao/prateleira", method = RequestMethod.GET)
+    public ModelAndView filtroPrateleira(ModelMap model) {
+        SobraMaterial filtro = new SobraMaterial();
+        filtro.setLargura("200");
+        filtro.setComprimento("900");
+        return filtrarSobraMaterial(filtro, model);
+    }
+
+    // Filtro fixo para Porta Copos
+    @RequestMapping(value = "/visualizacao/portacopos", method = RequestMethod.GET)
+    public ModelAndView filtroPortaCopos(ModelMap model) {
+        SobraMaterial filtro = new SobraMaterial();
+        filtro.setLargura("100");
+        filtro.setComprimento("100");
+        return filtrarSobraMaterial(filtro, model);
+    }
+
+    // Método privado reutilizando a lógica de filtro existente
+    private ModelAndView filtrarSobraMaterial(SobraMaterial filtro, ModelMap model) {
+        List<SobraMaterial> sobraMateriais = new ArrayList<>();
+        String saida = "";
+        String erro = "";
+
+        try {
+            sobraMateriais = smDao.filtrar(filtro); // reutiliza seu método de filtro do DAO
+            if (sobraMateriais.isEmpty()) {
+                saida = "Nenhuma sobra encontrada para o filtro aplicado.";
+            } else {
+                saida = "Foram encontrados " + sobraMateriais.size() + " resultados.";
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            erro = e.getMessage();
+        }
+
+        model.addAttribute("sobraMateriais", sobraMateriais);
+        model.addAttribute("erro", erro);
+        model.addAttribute("saida", saida);
+        model.addAttribute("sobramaterial", filtro); // mantém os valores no formulário
+
+        return new ModelAndView("visualizacao");
+    }
 }
